@@ -29,35 +29,46 @@ typedef struct{
 }memCach;
 
 
-void convertedecimal( memPrinc *p ){
-printf("Digite o número (base decimal) para ser convertido: ");
-int aux, num;
-cin>>num;
-   for (aux = 7; aux >= 0; aux--)
-   {
-      if (num % 2 == 0){
-         p->endereco[aux] = 0;
-         cout<<p->endereco[aux];
+
+void convertebinario(memPrinc *p){
+   int i=0, aux, num, k=-1;
+   
+   char bin[8]; // <---------------
+   p[i].bloco=0;
+
+   for(i=0;i<256;i++){
+         if(i%4==0){
+            k++;
+            
          }
-      else{
-         p->endereco[aux] = 1;
-      
-      cout<<p->endereco[aux];
-      }
-      num = num / 2;
+         num=i;
+            for (aux = 7; aux >= 0; aux--)
+            {
+               if (num % 2 == 0)
+                  p[i].endereco[aux] = '0';
+               else
+                  p[i].endereco[aux] = '1';
+               num = num / 2;
+            }
 
-   }
+            for (aux = 0; aux < 8; aux++){
+                cout<<p[i].endereco[aux];
+            }
+             cout<<" - Bloco: "<<k;
 
-  
+            printf("\n");
 }
+
+}
+
 
 int main()
 {
 
-   memPrinc mem;
+   memPrinc mem[256];
 
-   convertedecimal(&mem);
-   
+   convertebinario(mem);
+   cout<<endl;
    
    
 
