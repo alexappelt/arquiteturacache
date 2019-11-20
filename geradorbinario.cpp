@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <iostream>
+using namespace std;
 
 void menu(){
 	printf(" 1- Ler Memoria\n 2- Escrever memoria\n 3- Estatisticas\n");
@@ -21,32 +24,42 @@ typedef struct{
 
 typedef struct{
 	char celulaA, celulaB, celulaC,CelulaD;
-	char  rotulo;
+	char  rotulo[8];
 	int quadro;
 }memCach;
 
-int main()
-{
-   int num;
-   int bin[8]; // <---------------
-   int aux;
 
-   printf("Digite o número (base decimal) para ser convertido: ");
-   scanf("%d", &num);
-
+void convertedecimal( memPrinc *p ){
+printf("Digite o número (base decimal) para ser convertido: ");
+int aux, num;
+cin>>num;
    for (aux = 7; aux >= 0; aux--)
    {
-      if (num % 2 == 0)
-         bin[aux] = 0;
-      else
-         bin[aux] = 1;
+      if (num % 2 == 0){
+         p->endereco[aux] = 0;
+         cout<<p->endereco[aux];
+         }
+      else{
+         p->endereco[aux] = 1;
+      
+      cout<<p->endereco[aux];
+      }
       num = num / 2;
+
    }
 
-   for (aux = 0; aux < 8; aux++)
-       printf("%d", bin[aux]);
+  
+}
 
-   printf("\n");
+int main()
+{
+
+   memPrinc mem;
+
+   convertedecimal(&mem);
+   
+   
+   
 
    return 0;
 }
