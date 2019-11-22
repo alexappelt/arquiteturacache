@@ -1,2 +1,0 @@
-# arquiteturacache
-Simulador Memória Cache
