@@ -82,7 +82,41 @@ void mostraPrincipal(memPrinc *p){
 }
 
 void lerMem(memPrinc *p, memCach *c){
-	
+	char endere[8];
+	int blcach=0,blprinc=0;
+	bool a=false;
+	printf("Entre com o endereco para ser lido: ");
+	cin>>endere;
+	cout<<endere<<endl;
+	for(int i=2;i<6;i++){//saber qual quadro da cache
+		if(i==2&&endere[i]=='1')
+			blcach=blcach+8;
+		if(i==3&&endere[i]=='1')
+			blcach=blcach+4;
+		if(i==4&&endere[i]=='1')
+			blcach=blcach+2;
+		if(i==5&&endere[i]=='1')
+			blcach=blcach+1;
+	}
+	cout<<"blcache"<<blcach<<endl;
+	for(int i=0;i<256;i++){
+		if(strncmp(endere,p[i].endereco,8)==0){//pesquisa qual o bloco na principal
+			blprinc=p[i].bloco;
+			cout<<"bl princi"<<blprinc<<endl;
+		}
+	}
+	for(int i=0;i<256;i++){
+		if(blprinc==p[i].bloco){
+			c[blcach].celulaA=p[i].dado;
+			c[blcach].celulaB=p[i+1].dado;
+			c[blcach].celulaC=p[i+2].dado;
+			c[blcach].celulaD=p[i+3].dado;
+			a=true;
+		}
+		if(a)
+			break;
+	}
+	system("pause");
 
 }
 void mostraCache(memCach *c){
@@ -120,7 +154,7 @@ int main(){
 		menu();
 		scanf("%d", &n);
 		if(n==1){//ler memoria
-			
+			lerMem(memP, memC);
 		}
 		else if(n==2){//escrever memoria
 			
@@ -128,6 +162,10 @@ int main(){
 		else if(n==3){//statisticas
 			menu2();
 			scanf("%d",&n);
+		}
+		else if(n==4){
+			mostraPrincipal(memP);
+			system("pause");
 		}
 	}
    cout<<endl;
