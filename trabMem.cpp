@@ -6,13 +6,6 @@
 #include <iomanip>
 using namespace std;
 
-void menu2(){
-	printf("\n 1- Numero de Acessos\n 2- Numero de Acertos\n 3- Numero de Faltas\n");
-	printf(" 4- Numero de Leituras\n 5- Numero de Escritas\n 6- Numero de Acertos na Leitura\n");
-	printf(" 7- Numero de Acertos na Escrita\n 8- Numero de Faltas na Leitura\n 9- Numero de Faltas na Escrita\n");
-	printf(" Entre com a opcao: ");
-}
-
 typedef struct{
 	string dado;
 	int bloco;
@@ -21,10 +14,24 @@ typedef struct{
 
 typedef struct{
 	string celulaA, celulaB, celulaC,celulaD;
-	char  rotulo[8];
+	char  rotulo[2];
 	int quadro;
 }memCach;
 
+typedef struct{
+	int nacessos;
+	int acertos, faltas;
+	int leitura,escrita;
+	int acerleitura,acerescrita;
+	int faltleitura,faltescrita;
+}estatisticas;
+
+void menu2(estatisticas *es){
+	printf("\n Numero de Acessos: %d\n Numero de Acertos: %d\n Numero de Faltas: %d\n",es->nacessos,es->acertos,es->faltas);
+	printf(" Numero de Leituras: %d\n Numero de Escritas: %d\n Numero de Acertos na Leitura: %d\n",es->leitura,es->escrita,es->acerleitura);
+	printf(" Numero de Acertos na Escrita: %d\n Numero de Faltas na Leitura: %d\n Numero de Faltas na Escrita: %d\n",es->acerescrita,es->faltleitura,es->faltescrita);
+	system("pause");
+}
 
 void iniciaMemCache(memCach *p){
 	int i;
@@ -33,8 +40,8 @@ void iniciaMemCache(memCach *p){
 		p[i].celulaB=' ';
 		p[i].celulaC=' ';
 		p[i].celulaD=' ';
-		for(int a=0;a<8;a++){
-			p[i].rotulo[a]=' ';
+		for(int a=0;a<2;a++){
+			p[i].rotulo[a]='2';
 		}
 		p[i].quadro=i;
 	}
@@ -80,41 +87,81 @@ void mostraPrincipal(memPrinc *p){
 		cout<<endl;
 	}
 }
+void iniciaEstatisticas(estatisticas * es){
+	es->nacessos=0;
+	es->acertos=0;
+	es->faltas=0;
+	es->leitura=0;
+	es->escrita=0;
+	es->acerleitura=0;
+	es->acerescrita=0;
+	es->faltleitura=0;
+	es->faltescrita=0;	
+}
 
-void lerMem(memPrinc *p, memCach *c){
+void lerMem(memPrinc *p, memCach *c, estatisticas *es){
 	char endere[8];
 	int blcach=0,blprinc=0;
+	int blocoAtual=0, blocoNovo=0;
 	bool a=false;
-	printf("Entre com o endereco para ser lido: ");
+	printf("Entre com o endereco para ser lido:[        ]\b\b\b\b\b\b\b\b\b");
 	cin>>endere;
-	cout<<endere<<endl;
-	for(int i=2;i<6;i++){//saber qual quadro da cache
-		if(i==2&&endere[i]=='1')
+	es->nacessos++;
+	es->leitura++;
+	for(int i=0;i<6;i++){
+		if(i==0&&endere[i]=='1')//qual o num. do rotulo
+			blocoNovo=blocoNovo+2;
+		if(i==1&&endere[i]=='1')
+			blocoNovo=blocoNovo+1;
+			
+		else if(i==2&&endere[i]=='1')//saber qual quadro da cache
 			blcach=blcach+8;
-		if(i==3&&endere[i]=='1')
+		else if(i==3&&endere[i]=='1')
 			blcach=blcach+4;
-		if(i==4&&endere[i]=='1')
+		else if(i==4&&endere[i]=='1')
 			blcach=blcach+2;
-		if(i==5&&endere[i]=='1')
+		else if(i==5&&endere[i]=='1')
 			blcach=blcach+1;
 	}
-	cout<<"blcache"<<blcach<<endl;
-	for(int i=0;i<256;i++){
-		if(strncmp(endere,p[i].endereco,8)==0){//pesquisa qual o bloco na principal
-			blprinc=p[i].bloco;
-			cout<<"bl princi"<<blprinc<<endl;
+	
+	for(int i=0;i<2;i++){
+		if(i==0&&c[blcach].rotulo[i]=='1')//qual o num. do rotulo atual
+			blocoAtual=blocoAtual+2;
+		if(i==0&&c[blcach].rotulo[i]=='2'){
+			blocoAtual=blocoAtual+4;
+			i++;}
+		if(i==1&&c[blcach].rotulo[i]=='1')
+			blocoAtual=blocoAtual+1;
+	}
+	cout<<"novo rotulo "<<blocoNovo<<endl;
+	cout<<"rotulo atual "<<blocoAtual<<endl;
+	
+	if(blocoAtual!=blocoNovo){
+		es->faltas++;
+		es->faltleitura++;
+		for(int i=0;i<256;i++){
+			if(strncmp(endere,p[i].endereco,8)==0){//pesquisa qual o bloco na principal
+				blprinc=p[i].bloco;
+				cout<<"bl princi"<<blprinc<<endl;
+			}
+		}
+		for(int i=0;i<256;i++){//grava informaçoes na cache
+			if(blprinc==p[i].bloco){//procura bloco na mem.principal
+				c[blcach].celulaA=p[i].dado;
+				c[blcach].celulaB=p[i+1].dado;
+				c[blcach].celulaC=p[i+2].dado;
+				c[blcach].celulaD=p[i+3].dado;
+				c[blcach].rotulo[0]=endere[0];
+				c[blcach].rotulo[1]=endere[1];
+				a=true;
+			}
+			if(a)
+				break;
 		}
 	}
-	for(int i=0;i<256;i++){
-		if(blprinc==p[i].bloco){
-			c[blcach].celulaA=p[i].dado;
-			c[blcach].celulaB=p[i+1].dado;
-			c[blcach].celulaC=p[i+2].dado;
-			c[blcach].celulaD=p[i+3].dado;
-			a=true;
-		}
-		if(a)
-			break;
+	else{
+		es->acertos++;
+		es->acerleitura++;
 	}
 	system("pause");
 
@@ -122,23 +169,25 @@ void lerMem(memPrinc *p, memCach *c){
 void mostraCache(memCach *c){
 	printf(" Rotulo  Quadro Celula0 Celula1 Celula2 Celula3\n");
 	for(int i=0;i<16;i++){
-		for(int a=0;a<8;a++){
-			printf("%c", c[i].rotulo[a]);
+		cout<<"  ";
+		for(int a=0;a<2;a++){
+			if(c[i].rotulo[a]=='2'){
+				printf("%c", ' ');}
+			else{
+				printf("%c", c[i].rotulo[a]);}
 		}
-		
-		cout<<setw(4)<<c[i].quadro;
+		cout<<setw(9)<<c[i].quadro;
 		cout<<setw(8)<<c[i].celulaA;
 		cout<<setw(8)<<c[i].celulaB;
 		cout<<setw(8)<<c[i].celulaC;
 		cout<<setw(8)<<c[i].celulaD;
-		
 		cout<<endl;
 	}
 }
 
 void menu(){
 	printf(" 1- Ler Memoria\n 2- Escrever Memoria\n 3- Estatisticas\n");
-	printf(" 4-Mostrar Memoria Principal\n");
+	printf(" 4- Mostrar Memoria Principal\n");
 	printf(" Entre com a opcao: ");
 }
 
@@ -146,22 +195,23 @@ int main(){
 	int n;
 	memPrinc memP[256];
 	memCach memC[16];
+	estatisticas est;
 	iniciaMemPrincipal(memP);
 	iniciaMemCache(memC);
+	iniciaEstatisticas(&est);
 	while(1){
 		system("cls");
 		mostraCache(memC);
 		menu();
 		scanf("%d", &n);
 		if(n==1){//ler memoria
-			lerMem(memP, memC);
+			lerMem(memP, memC,&est);
 		}
 		else if(n==2){//escrever memoria
 			
 		}
 		else if(n==3){//statisticas
-			menu2();
-			scanf("%d",&n);
+			menu2(&est);			
 		}
 		else if(n==4){
 			mostraPrincipal(memP);
