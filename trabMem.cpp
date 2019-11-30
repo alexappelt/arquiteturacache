@@ -142,7 +142,6 @@ void lerMem(memPrinc *p, memCach *c, estatisticas *es){
 				blprinc=p[i].bloco;
 			}
 		}
-		cout<<blprinc;
 		for(int i=0;i<256;i++){//grava informaçoes na cache
 			if(blprinc==p[i].bloco){//procura bloco na mem.principal
 				c[blcach].celulaA=p[i].dado;
@@ -161,7 +160,6 @@ void lerMem(memPrinc *p, memCach *c, estatisticas *es){
 		es->acertos++;
 		es->acerleitura++;
 	}
-	system("pause");
 }
 
 void escreverMem(memPrinc *p, memCach *c, estatisticas *es){
@@ -221,7 +219,6 @@ void escreverMem(memPrinc *p, memCach *c, estatisticas *es){
 				blocoP=p[i].bloco;
 			}
 		}
-		cout<<celulaP<<endl;
 		for(int i=0;i<256;i++){//grava informaçoes na cache
 			if(blocoP==p[i].bloco){//procura bloco na mem.principal
 				c[quadro].celulaA=p[i].dado;
@@ -236,7 +233,7 @@ void escreverMem(memPrinc *p, memCach *c, estatisticas *es){
 				break;
 		}
 		es->faltas++;
-		es->faltleitura++;
+		es->faltescrita++;
 	}
 	else{
 		if(celula==0)
@@ -248,9 +245,8 @@ void escreverMem(memPrinc *p, memCach *c, estatisticas *es){
 		else if(celula==3)
 			c[quadro].celulaD=novo;
 		es->acertos++;
-		es->acerleitura++;
-	}
-	system("pause");	
+		es->acerescrita++;
+	}	
 }
 
 void mostraCache(memCach *c){
