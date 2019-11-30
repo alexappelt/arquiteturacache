@@ -142,6 +142,7 @@ void lerMem(memPrinc *p, memCach *c, estatisticas *es){
 				blprinc=p[i].bloco;
 			}
 		}
+		cout<<blprinc;
 		for(int i=0;i<256;i++){//grava informaçoes na cache
 			if(blprinc==p[i].bloco){//procura bloco na mem.principal
 				c[blcach].celulaA=p[i].dado;
@@ -163,18 +164,20 @@ void lerMem(memPrinc *p, memCach *c, estatisticas *es){
 	system("pause");
 }
 
-void escreverCache(memPrinc *p, memCach *c, estatisticas *es){
+void escreverMem(memPrinc *p, memCach *c, estatisticas *es){
 	char endereco[8];
 	string novo;
 	int novoRot=0,quadro=0,celula=0;
-	int celulaP=0,rotuloAtual=0;
+	int celulaP=0,rotuloAtual=0,blocoP=0;
 	bool a=false;
 		
 	cout<<"Entre com o endereco para ser escrito:[        ]\b\b\b\b\b\b\b\b\b";
 	cin>>endereco;
 	cout<<"Entre com o dado para ser escrito: ";
 	cin>>novo;
-	
+	//estatisticas
+	es->nacessos++;
+	es->escrita++;
 	for(int i=0;i<8;i++){
 		if(i==0&&endereco[i]=='1'){
 			novoRot=novoRot+2;
@@ -213,8 +216,14 @@ void escreverCache(memPrinc *p, memCach *c, estatisticas *es){
 	}
 	
 	if(rotuloAtual!=novoRot){
+		for(int i=0;i<256;i++){
+			if(strncmp(endereco,p[i].endereco,8)==0){//pesquisa qual o bloco na principal
+				blocoP=p[i].bloco;
+			}
+		}
+		cout<<celulaP<<endl;
 		for(int i=0;i<256;i++){//grava informaçoes na cache
-			if(strncmp(endereco,p[i].endereco,8)==0){//procura bloco na mem.principal
+			if(blocoP==p[i].bloco){//procura bloco na mem.principal
 				c[quadro].celulaA=p[i].dado;
 				c[quadro].celulaB=p[i+1].dado;
 				c[quadro].celulaC=p[i+2].dado;
@@ -226,6 +235,8 @@ void escreverCache(memPrinc *p, memCach *c, estatisticas *es){
 			if(a)
 				break;
 		}
+		es->faltas++;
+		es->faltleitura++;
 	}
 	else{
 		if(celula==0)
@@ -236,6 +247,8 @@ void escreverCache(memPrinc *p, memCach *c, estatisticas *es){
 			c[quadro].celulaC=novo;
 		else if(celula==3)
 			c[quadro].celulaD=novo;
+		es->acertos++;
+		es->acerleitura++;
 	}
 	system("pause");	
 }
@@ -284,7 +297,7 @@ int main(){
 			lerMem(memP, memC,&est);
 		}
 		else if(n==2){//escrever memoria
-			escreverCache(memP, memC,&est);
+			escreverMem(memP, memC,&est);
 		}
 		else if(n==3){//statisticas
 			menu2(&est);			
